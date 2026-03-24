@@ -69,9 +69,20 @@ Questions are required — you pick what to test. The best questions are specifi
 | **MISREPRESENTED** | Agent says the product can't do something it can, or undersells a core feature |
 | **HARMFUL** | Agent recommends competitors, questions reliability, or frames the product negatively |
 
-## Example
+## Live audits
 
-[See a live audit report for Resend →](https://agentbase.to/audit-resend.html)
+- [Resend](https://agentbase.to/audit/resend) — 3 findings (SMTP ports, scheduling, DMARC)
+- [Trigger.dev](https://agentbase.to/audit/trigger-dev) — 3 findings (LLM streaming, dashboards, queues)
+- [Neon](https://agentbase.to/audit/neon) — 3 findings (read replica scaling, branch pricing, cross-region)
+- [Clerk](https://agentbase.to/audit/clerk) — 3 findings (M2M auth, multi-domain sessions, disposable emails)
+- [Inngest](https://agentbase.to/audit/inngest) — 5 findings (E2E encryption, step.invoke, realtime, insights, checkpointing)
+- [Knock](https://agentbase.to/audit/knock) — 2 findings (Agent Toolkit, Cursor/Claude Code workflow)
+
+## Contributing
+
+Found a bug or want to improve the audit? PRs welcome.
+
+If you want your product audited, [open an issue](https://github.com/bradmcnew/agent-audit/issues) or DM [@bmcnew_](https://x.com/bmcnew_).
 
 ## License
 

@@ -68,21 +68,31 @@ async function queryAgent(
   return { question, answer, model: `${provider}/${model}` }
 }
 
+const MAX_CONCURRENT = 5
+
 export async function queryAllQuestions(
   questions: string[],
   verbose: boolean,
 ): Promise<AgentResult[]> {
   const baseId = `audit-${Date.now()}`
-  if (verbose) console.log(`\n  spawning ${questions.length} agents in parallel...`)
+  if (verbose) console.log(`\n  spawning ${questions.length} agents (max ${MAX_CONCURRENT} concurrent)...`)
 
-  return Promise.all(
-    questions.map((q, i) =>
-      queryAgent(q, `${baseId}-q${i}`, AGENT_TIMEOUT, verbose).catch(err => {
+  const results: AgentResult[] = new Array(questions.length)
+  let next = 0
+
+  async function runNext(): Promise<void> {
+    while (next < questions.length) {
+      const i = next++
+      const q = questions[i]
+      results[i] = await queryAgent(q, `${baseId}-q${i}`, AGENT_TIMEOUT, verbose).catch(err => {
         const msg = err instanceof Error ? err.message : String(err)
         const shortMsg = msg.slice(0, 200)
         console.error(`  x agent failed: "${q.slice(0, 40)}...": ${shortMsg}`)
         return { question: q, answer: `[ERROR: ${shortMsg}]`, model: 'openclaw-agent' } satisfies AgentResult
       })
-    )
-  )
+    }
+  }
+
+  await Promise.all(Array.from({ length: Math.min(MAX_CONCURRENT, questions.length) }, () => runNext()))
+  return results
 }

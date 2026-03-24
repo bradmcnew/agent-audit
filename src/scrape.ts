@@ -14,7 +14,7 @@ export async function scrape(domain: string, extraPages: string[], verbose: bool
 
   if (verbose) console.log(`\nCrawling ${cleanDomain} with crawl4ai...`)
 
-  let stdout: string
+  let stdout = ''
   try {
     const result = await exec('crwl', [
       baseUrl,
@@ -30,7 +30,12 @@ export async function scrape(domain: string, extraPages: string[], verbose: bool
     if (err && typeof err === 'object' && 'code' in err && err.code === 'ENOENT') {
       throw new Error('crawl4ai not installed. Run: pip install -U crawl4ai && crawl4ai-setup')
     }
-    throw err
+    // If extra pages are specified, fall back to crawling those individually
+    if (extraPages.length > 0) {
+      if (verbose) console.log(`  main crawl failed, falling back to extra pages...`)
+    } else {
+      throw err
+    }
   }
 
   // Parse separator-delimited output:
